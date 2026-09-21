@@ -1,0 +1,49 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+
+#docs
+/docs
+
+# Java
+control-plane/target/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Local runtime data
+runtime/
+control-plane/runtime/
+tool-service/runtime/
+
+# Local secrets
+.env
+*.env
+.env.*
+!.env.*.example
+*.secret
+*.pem
+*.key
+*.local.yml
+
+# Production runtime data and backups
+deploy/data/
+deploy/backups/
+backups/
+
+# Environment
+.env
+
+# Dependencies
+web-app/node_modules/
+web-app/dist/
+web-app/src/**/*.js
+web-app/src/**/*.d.ts
+web-app/src/*.js
+web-app/src/*.d.ts
+control-plane/src/main/resources/static/
+.conda/

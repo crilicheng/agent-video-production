@@ -1,0 +1,88 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: agent-video-control-plane
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://127.0.0.1:3306/agent-video-pipeline?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 1
+  servlet:
+    multipart:
+      max-file-size: ${UPLOAD_MAX_FILE_SIZE:2GB}
+      max-request-size: ${UPLOAD_MAX_REQUEST_SIZE:2GB}
+  data:
+    redis:
+      url: ${REDIS_URL:redis://127.0.0.1:6379}
+  rabbitmq:
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    connection-timeout: ${RABBITMQ_CONNECTION_TIMEOUT_MS:5000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: ${MANAGEMENT_HEALTH_DETAILS:never}
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name:agent-video-control-plane}
+
+app:
+  redis:
+    enabled: ${REDIS_ENABLED:false}
+    url: ${REDIS_URL:redis://127.0.0.1:6379}
+    dag-draft-ttl-seconds: ${REDIS_DAG_DRAFT_TTL_SECONDS:86400}
+    gate-draft-ttl-seconds: ${REDIS_GATE_DRAFT_TTL_SECONDS:14400}
+    agent-blackboard-ttl-seconds: ${REDIS_AGENT_BLACKBOARD_TTL_SECONDS:1800}
+    workflow-lock-ttl-seconds: ${REDIS_WORKFLOW_LOCK_TTL_SECONDS:15}
+    workflow-user-concurrency-limit: ${REDIS_WORKFLOW_USER_CONCURRENCY_LIMIT:2}
+    workflow-project-concurrency-limit: ${REDIS_WORKFLOW_PROJECT_CONCURRENCY_LIMIT:2}
+    workflow-concurrency-lease-seconds: ${REDIS_WORKFLOW_CONCURRENCY_LEASE_SECONDS:7200}
+  messaging:
+    rabbit:
+      enabled: ${RABBITMQ_ENABLED:false}
+      task-exchange: ${RABBITMQ_TASK_EXCHANGE:avp.task.v1}
+      publisher-interval-ms: ${RABBITMQ_PUBLISHER_INTERVAL_MS:1000}
+      worker-token: ${RABBITMQ_WORKER_TOKEN:}
+
+  auth:
+    session-days: ${AUTH_SESSION_DAYS:30}
+    secure-cookie: ${AUTH_SECURE_COOKIE:false}
+  storage:
+    provider: ${ARTIFACT_STORAGE_PROVIDER:local}
+    root: ${APP_STORAGE_ROOT:runtime/storage}
+    oss:
+      endpoint: ${OSS_ENDPOINT:}
+      region: ${OSS_REGION:}
+      bucket: ${OSS_BUCKET:}
+      access-key-id: ${OSS_ACCESS_KEY_ID:}
+      access-key-secret: ${OSS_ACCESS_KEY_SECRET:}
+      signed-url-ttl-seconds: ${OSS_SIGNED_URL_TTL_SECONDS:600}
+  artifact-root: ${APP_ARTIFACT_ROOT:runtime/artifacts}
+  public-base-url: ${APP_PUBLIC_BASE_URL:http://127.0.0.1:8080}
+  tool-service:
+    base-url: ${TOOL_SERVICE_BASE_URL:http://127.0.0.1:8090}
+    poll-interval-ms: ${TOOL_SERVICE_POLL_INTERVAL_MS:3000}
+  workflow:
+    max-attempts: ${WORKFLOW_MAX_ATTEMPTS:3}
+    retry-base-delay-ms: ${WORKFLOW_RETRY_BASE_DELAY_MS:1000}
+    dispatch-recovery-timeout-ms: ${WORKFLOW_DISPATCH_RECOVERY_TIMEOUT_MS:30000}
+    poll-failure-limit: ${WORKFLOW_POLL_FAILURE_LIMIT:10}
